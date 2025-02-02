@@ -1,8 +1,3 @@
-fetch("/data")
-  .then(res => res.json())
-  .then(data => loadData(data))
-  .catch(err => alert(err));
-
 let array = [];
 function loadData(file){
   array = file;
@@ -23,7 +18,33 @@ function displayData(){
     document.querySelector(".display").appendChild(div);
   });
 }
+
+function showLoader() {
+  document.getElementById("loader").style.display = "block";
+}
+
+function hideLoader() {
+  document.getElementById("loader").style.display = "none";
+}
+
+// Update the fetchData function to show and hide the loader:
+function fetchData(){
+  showLoader();
+  fetch("/data")
+    .then(res => res.json())
+    .then(data => {
+      loadData(data);
+      hideLoader();
+    })
+    .catch(err => {
+      alert(err);
+      hideLoader();
+    });
+}
+
+// Update the save function to show and hide the loader:
 function save(){
+  showLoader();
   fetch("/data", {
     method: "POST",
     headers: {
@@ -36,16 +57,14 @@ function save(){
     console.log(response);
     fetchData();
   })
-  .catch(err =>{
+  .catch(err => {
     alert(err);
+    hideLoader();
   });
 }
-function fetchData(){
-fetch("/data")
-  .then(res => res.json())
-  .then(data => loadData(data))
-  .catch(err => alert(err));
-}
+
+
+
 function add(){
   let name = document.getElementById("name").value.trim();
   let class_ = parseFloat(document.getElementById("class").value.trim());
@@ -105,3 +124,4 @@ function cancel(){
     add();
   };
 }
+fetchData();
